@@ -1,0 +1,39 @@
+name: deploy_go_all
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+      role_arn:
+        required: true
+        type: string
+      regions:
+        required: true
+        type: string
+      config:
+        required: true
+        type: string
+    secrets:
+      github_login:
+        required: true
+
+jobs:
+  all:
+    name: '>'
+    uses: ./.github/workflows/deploy_go_single.yml
+    with:
+      env: ${{ inputs.env }}
+      role_arn: ${{ inputs.role_arn }}
+      target_type: ${{ matrix.config.type }}
+      target_name: ${{ matrix.config.name }}
+      regions: ${{ matrix.config.regions == 'all' && inputs.regions || matrix.config.regions }}
+      arch: ${{ matrix.config.arch }}
+    secrets:
+      github_login: ${{ secrets.github_login }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJson(inputs.config) }}
+
