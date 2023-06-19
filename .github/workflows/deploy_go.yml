@@ -58,7 +58,7 @@ jobs:
   notify_fail:
     runs-on: self-hosted
     needs: [deploy_go]
-    # if: ${{ inputs.notify_fail && failure() }}
+    if: ${{ inputs.notify_fail && failure() }}
     steps:
       - run: echo "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
       - uses: slackapi/slack-github-action@v1.24.0
@@ -66,7 +66,7 @@ jobs:
           channel-id: ${{ inputs.slack_channel }}
           payload: |
             {
-              "text": "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+              "text": "Workflow failed! ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.slack_token }}
