@@ -22,9 +22,17 @@ on:
         required: false
         default: false
         type: boolean
+      notify_fail:
+        required: false
+        default: false
+        type: boolean
     secrets:
       github_login:
         required: true
+      slack_token:
+        required: false
+      slack_channel:
+        required: false
 
 jobs:
   deploy_go:
@@ -46,7 +54,18 @@ jobs:
       matrix:
         config: ${{ fromJson(inputs.config) }}
 
-  test:
+  notify_fail:
     runs-on: self-hosted
+    needs: [deploy_go]
+    # if: ${{ inputs.notify_fail && failure() }}
     steps:
       - run: echo "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+      - uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: ${{ inputs.slack_channel }}
+          payload: |
+            {
+              "url": "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.slack_token }}
