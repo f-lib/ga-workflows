@@ -34,7 +34,6 @@ on:
 
 jobs:
   build:
-    if: ${{ !inputs.dry_run }}
     runs-on: [self-hosted, "${{ inputs.arch }}"]
     name: "[${{ inputs.target_type }}][${{ inputs.target_name }}] build"
     steps:
@@ -48,7 +47,6 @@ jobs:
           ./.github/scripts/build.sh ${{ inputs.env }} ${{ inputs.target_type }} ${{ inputs.target_name }} '${{ inputs.regions }}' ${{ inputs.arch }} ${{ secrets.github_login }} ${{ inputs.aws_account_id }} ${{ inputs.dry_run }}
 
   wait:
-    if: ${{ !inputs.dry_run }}
     runs-on: self-hosted
     name: "[${{ inputs.target_type }}][${{ inputs.target_name }}] wait"
     needs: [build]
