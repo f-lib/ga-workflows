@@ -11,7 +11,7 @@ AWS_ACCOUNT_ID=$7
 DRY_RUN=$8
 
 if [[ $DRY_RUN == "true" ]]; then
-  exit 0
+  exit 1
 fi
 
 MS="ms-activity"
