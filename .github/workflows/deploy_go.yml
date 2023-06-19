@@ -26,12 +26,13 @@ on:
         required: false
         default: false
         type: boolean
+      slack_channel:
+        required: false
+        type: string
     secrets:
       github_login:
         required: true
       slack_token:
-        required: false
-      slack_channel:
         required: false
 
 jobs:
