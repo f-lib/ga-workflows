@@ -18,6 +18,10 @@ on:
       config:
         required: true
         type: string
+      dry_run:
+        required: false
+        default: false
+        type: boolean
     secrets:
       github_login:
         required: true
@@ -34,6 +38,7 @@ jobs:
       target_name: ${{ matrix.config.name }}
       regions: ${{ matrix.config.regions == 'all' && inputs.regions || matrix.config.regions }}
       arch: ${{ matrix.config.arch }}
+      dry_run: ${{ inputs.dry_run }}
     secrets:
       github_login: ${{ secrets.github_login }}
     strategy:

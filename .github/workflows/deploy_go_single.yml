@@ -24,12 +24,17 @@ on:
       arch:
         required: true
         type: string
+      dry_run:
+        required: false
+        default: false
+        type: boolean
     secrets:
       github_login:
         required: true
 
 jobs:
   build:
+    if: ${{ !inputs.dry_run }}
     runs-on: [self-hosted, "${{ inputs.arch }}"]
     name: "[${{ inputs.target_type }}][${{ inputs.target_name }}] build"
     steps:
