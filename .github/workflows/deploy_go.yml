@@ -46,3 +46,7 @@ jobs:
       matrix:
         config: ${{ fromJson(inputs.config) }}
 
+  test:
+    runs-on: self-hosted
+    steps:
+      - run: echo "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
