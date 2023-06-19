@@ -28,7 +28,7 @@ on:
 jobs:
   build:
     runs-on: [self-hosted, "${{ inputs.arch }}"]
-    name: ${{ inputs.target_type }}-${{ inputs.target_name }} build
+    name: "[${{ inputs.target_type }}][${{ inputs.target_name }}] build"
     steps:
       - uses: actions/checkout@v3
       - run: echo here ${{ vars.AWS_ACCOUNT_ID_STG }}
@@ -42,7 +42,7 @@ jobs:
 
   wait:
     runs-on: self-hosted
-    name: ${{ inputs.target_type }}-${{ inputs.target_name }} wait
+    name: "[${{ inputs.target_type }}][${{ inputs.target_name }}] wait"
     needs: [build]
     strategy:
       fail-fast: false

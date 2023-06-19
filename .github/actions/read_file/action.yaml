@@ -1,0 +1,20 @@
+name: read-file
+description: Read file as multi line string
+inputs:
+  path:
+    description: File to read
+    required: true
+outputs:
+  text:
+    description: File content as text
+    value: ${{ steps.load_json.outputs.TARGET_FILE }}
+runs:
+  using: "composite"
+  steps:
+    - id: load_json
+      run: |
+        echo 'TARGET_FILE<<EOF' >> $GITHUB_OUTPUT
+        cat ${{ inputs.path }} >> $GITHUB_OUTPUT
+        echo '' >> $GITHUB_OUTPUT
+        echo 'EOF' >> $GITHUB_OUTPUT
+      shell: bash

@@ -20,8 +20,8 @@ on:
         required: true
 
 jobs:
-  all:
-    name: '>'
+  deploy_go:
+    name: deploy-go
     uses: ./.github/workflows/deploy_go_single.yml
     with:
       env: ${{ inputs.env }}
