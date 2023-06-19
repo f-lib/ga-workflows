@@ -7,6 +7,12 @@ TARGET_NAME=$3
 REGION=$4
 ARCH=$5
 MY_GITHUB_LOGIN=$6
+AWS_ACCOUNT_ID=$7
+DRY_RUN=$8
+
+if [[ $DRY_RUN == "true" ]]; then
+  exit 0
+fi
 
 MS="ms-activity"
 
