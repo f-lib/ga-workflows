@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        config: ${{ fromJson(get_params.outputs.config) }}
+        config: ${{ fromJson(needs.get_params.outputs.config) }}
 
   notify_fail:
     runs-on: self-hosted
