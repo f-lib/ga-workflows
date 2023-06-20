@@ -42,7 +42,7 @@ jobs:
     if: ${{ success() || failure() }}
     steps:
       - uses: slackapi/slack-github-action@v1.24.0
-        if: ${{ needs.deploy_go.result == "success" }}
+        if: ${{ needs.deploy_go.result == 'success' }}
         name: notify success
         with:
           channel-id: "github-workflow"
@@ -53,7 +53,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
       - uses: slackapi/slack-github-action@v1.24.0
-        if: ${{ !needs.deploy_go.result == "failure" }}
+        if: ${{ needs.deploy_go.result == 'failure' }}
         name: notify failure
         with:
           channel-id: "github-workflow"
