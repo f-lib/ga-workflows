@@ -39,6 +39,7 @@ jobs:
   notify:
     runs-on: self-hosted
     needs: [deploy_go]
+    if: ${{ success() || failure() }}
     steps:
       - run: echo "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
       - uses: slackapi/slack-github-action@v1.24.0
