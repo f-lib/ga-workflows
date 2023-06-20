@@ -9,16 +9,15 @@ ARCH=$5
 MY_GITHUB_LOGIN=$6
 AWS_ACCOUNT_ID=$7
 DRY_RUN=$8
+REPO_NAME=$9
 
 if [[ $DRY_RUN == "true" ]]; then
   exit 0
 fi
 
-MS="ms-activity"
-
-LAMBDA_NAME=flicspy-$ENV-$MS-$TARGET_NAME
-CLUSTER_NAME=flicspy-$ENV-$MS
-SERVICE_NAME=flicspy-$ENV-$MS-$TARGET_NAME
+LAMBDA_NAME=flicspy-$ENV-$REPO_NAME-$TARGET_NAME
+CLUSTER_NAME=flicspy-$ENV-$REPO_NAME
+SERVICE_NAME=flicspy-$ENV-$REPO_NAME-$TARGET_NAME
 
 if [[ $TARGET_TYPE == "lambda" ]]; then
   time aws lambda wait function-updated --function-name $LAMBDA_NAME --region $REGION
