@@ -36,18 +36,30 @@ jobs:
       matrix:
         config: ${{ fromJson(needs.get_params.outputs.config) }}
 
-  notify_fail:
+  notify:
     runs-on: self-hosted
     needs: [deploy_go]
-    if: ${{ inputs.notify_fail && failure() }}
     steps:
       - run: echo "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
       - uses: slackapi/slack-github-action@v1.24.0
+        if: ${{ failure() }}
+        name: notify failure
         with:
           channel-id: "github-workflow"
           payload: |
             {
-              "text": "Workflow failed! ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+              "text": "@here :broken_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      - uses: slackapi/slack-github-action@v1.24.0
+        if: ${{ success() }}
+        name: notify success
+        with:
+          channel-id: "github-workflow"
+          payload: |
+            {
+              "text": ":green_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
