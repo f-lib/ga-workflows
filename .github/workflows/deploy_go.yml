@@ -41,26 +41,25 @@ jobs:
     needs: [deploy_go]
     if: ${{ success() || failure() }}
     steps:
-      - run: echo "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
       - uses: slackapi/slack-github-action@v1.24.0
-        if: ${{ failure() }}
-        name: notify failure
-        with:
-          channel-id: "github-workflow"
-          payload: |
-            {
-              "text": "@here :broken_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-      - uses: slackapi/slack-github-action@v1.24.0
-        if: ${{ success() }}
+        if: ${{ !needs.deploy_go.result }}
         name: notify success
         with:
           channel-id: "github-workflow"
           payload: |
             {
               "text": ":green_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      - uses: slackapi/slack-github-action@v1.24.0
+        if: ${{ !needs.deploy_go.result }}
+        name: notify failure
+        with:
+          channel-id: "github-workflow"
+          payload: |
+            {
+              "text": "@here :broken_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
