@@ -57,6 +57,8 @@ jobs:
     name: get_params
     steps:
       - run: ls -R
+      - uses: actions/checkout@v3
+      - run: ls -R
       - id: load_json
         uses: f-lib/github-actions/read-file@main
         with:
