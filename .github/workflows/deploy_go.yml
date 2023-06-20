@@ -3,6 +3,9 @@ name: deploy_go_all
 on:
   workflow_call:
     inputs:
+      env:
+        required: true
+        type: string
       path:
         required: true
         type: string
@@ -68,18 +71,11 @@ jobs:
     runs-on: self-hosted
     name: get_params
     steps:
-      - run: pwd
-      - run: echo ${{ secrets.MY_GITHUB_LOGIN }}
-      - run: echo ${{ secrets.SLACK_TOKEN }}
-      - run: ls -R
       - uses: actions/checkout@v3
-      - run: ls -R
       - id: load_json
         uses: f-lib/github-actions/read-file@main
         with:
           path: ${{ inputs.path }}
-      - id: get_env
-        uses: f-lib/github-actions/get-env-from-label@main
       - uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/flicspy-${{ github.event.repository.name }}-github-actions-deploy
@@ -87,9 +83,9 @@ jobs:
       - id: get_target_regions
         uses: f-lib/github-actions/get-target-regions@main
         with:
-          ssm_param_name: flicspy-${{ steps.get_env.outputs.env }}-${{ github.event.repository.name }}-blue-green-regions
+          ssm_param_name: flicspy-${{ inputs.env }}-${{ github.event.repository.name }}-blue-green-regions
           ssm_param_region: us-east-2
     outputs:
-      env: ${{ steps.get_env.outputs.env}}
+      env: ${{ inputs.env }}
       target_regions: ${{ steps.get_target_regions.outputs.target_regions }}
       config: ${{ steps.load_json.outputs.text }}
