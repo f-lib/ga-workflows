@@ -3,57 +3,40 @@ name: deploy_go_all
 on:
   workflow_call:
     inputs:
-      env:
+      path:
         required: true
         type: string
       aws_account_id:
-        required: true
-        type: string
-      role_arn:
-        required: true
-        type: string
-      regions:
-        required: true
-        type: string
-      config:
         required: true
         type: string
       dry_run:
         required: false
         default: false
         type: boolean
-      notify_fail:
-        required: false
-        default: false
-        type: boolean
-      slack_channel:
-        required: false
-        type: string
-    secrets:
-      github_login:
-        required: true
-      slack_token:
-        required: false
+
+env:
+  ROLE_ARN: "arn:aws:iam::${{ inputs.aws_account_id}}:role/flicspy-${{ github.repository }}-github-actions-deploy"
 
 jobs:
   deploy_go:
     name: deploy-go
     uses: ./.github/workflows/deploy_go_single.yml
+    needs: [get_params]
     with:
-      env: ${{ inputs.env }}
-      aws_account_id: ${{ inputs.aws_account_id }}
-      role_arn: ${{ inputs.role_arn }}
+      env: ${{ get_params.outputs.env }}
+      aws_account_id: ${{ vars.AWS_ACCOUNT_ID_PRD }}
+      role_arn: ${{ env.ROLE_ARN }}
       target_type: ${{ matrix.config.type }}
       target_name: ${{ matrix.config.name }}
-      regions: ${{ matrix.config.regions == 'all' && inputs.regions || matrix.config.regions }}
+      regions: ${{ matrix.config.regions == 'all' && get_params.outputs.target_regions || matrix.config.regions }}
       arch: ${{ matrix.config.arch }}
       dry_run: ${{ inputs.dry_run }}
     secrets:
-      github_login: ${{ secrets.github_login }}
+      github_login: ${{ secrets.MY_GITHUB_LOGIN }}
     strategy:
       fail-fast: false
       matrix:
-        config: ${{ fromJson(inputs.config) }}
+        config: ${{ fromJson(get_params.outputs.config) }}
 
   notify_fail:
     runs-on: self-hosted
@@ -63,10 +46,34 @@ jobs:
       - run: echo "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
       - uses: slackapi/slack-github-action@v1.24.0
         with:
-          channel-id: ${{ inputs.slack_channel }}
+          channel-id: "github-workflow"
           payload: |
             {
               "text": "Workflow failed! ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
             }
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.slack_token }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+
+  get_params:
+    runs-on: self-hosted
+    name: get_params
+    steps:
+      - id: load_json
+        uses: f-lib/github-actions/read-file@main
+        with:
+          path: ${{ inputs.path }}
+      - id: get_env
+        uses: f-lib/github-actions/get-env-from-label@main
+      - uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: ${{ vars.DEPLOY_ROLE_ARN_STG }}
+          aws-region: us-east-1
+      - id: get_target_regions
+        uses: f-lib/github-actions/get-target-regions@main
+        with:
+          ssm_param_name: flicspy-${{ steps.get_env.outputs.env }}-${{ github.repository }}-blue-green-regions
+          ssm_param_region: us-east-2
+    outputs:
+      env: ${{ steps.get_env.outputs.env}}
+      target_regions: ${{ steps.get_target_regions.outputs.target_regions }}
+      config: ${{ steps.load_json.outputs.text }}
