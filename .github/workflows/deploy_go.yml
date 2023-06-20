@@ -22,9 +22,8 @@ jobs:
     name: deploy-go
     uses: ./.github/workflows/deploy_go_single.yml
     needs: [get_params]
-    if: ${{ needs.get_params.outputs.env != '' }}
     with:
-      env: ${{ needs.get_params.outputs.env }}
+      env: ${{ inputs.env }}
       aws_account_id: ${{ inputs.aws_account_id }}
       role_arn: arn:aws:iam::${{ inputs.aws_account_id }}:role/flicspy-${{ github.event.repository.name }}-github-actions-deploy
       target_type: ${{ matrix.config.type }}
@@ -86,6 +85,5 @@ jobs:
           ssm_param_name: flicspy-${{ inputs.env }}-${{ github.event.repository.name }}-blue-green-regions
           ssm_param_region: us-east-2
     outputs:
-      env: ${{ inputs.env }}
       target_regions: ${{ steps.get_target_regions.outputs.target_regions }}
       config: ${{ steps.load_json.outputs.text }}
