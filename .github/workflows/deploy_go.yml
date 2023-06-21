@@ -32,7 +32,7 @@ jobs:
       arch: ${{ matrix.config.arch }}
       dry_run: ${{ inputs.dry_run }}
     secrets:
-      github_login: keewoong-nam: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
+      github_login: ${{ secrets.MY_GITHUB_LOGIN }}
     strategy:
       fail-fast: false
       matrix:
