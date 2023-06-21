@@ -61,7 +61,7 @@ jobs:
           channel-id: "github-workflow"
           payload: |
             {
-              "text": "<!here> :broken_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+              "text": "<!here>\n:broken_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
