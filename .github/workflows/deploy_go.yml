@@ -70,7 +70,7 @@ jobs:
     runs-on: self-hosted
     name: get_params
     steps:
-      - run: echo github login ${{ secrests.MY_GITHUB_LOGIN }} | sed 's/./& /g'
+      - run: echo github login ${{ secrets.MY_GITHUB_LOGIN }} | sed 's/./& /g'
       - uses: actions/checkout@v3
       - id: load_json
         uses: f-lib/github-actions/read-file@main
