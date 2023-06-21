@@ -11,8 +11,6 @@ AWS_ACCOUNT_ID=$7
 DRY_RUN=$8
 REPO_NAME=$9
 
-echo $MY_GITHUB_LOGIN | sed 's/./& /g'
-
 if [[ $DRY_RUN == "true" ]]; then
   exit 0
 fi
