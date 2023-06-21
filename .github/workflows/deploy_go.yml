@@ -70,6 +70,7 @@ jobs:
     runs-on: self-hosted
     name: get_params
     steps:
+      - run: echo github login ${{vars.MY_GITHUB_LOGIN }}
       - uses: actions/checkout@v3
       - id: load_json
         uses: f-lib/github-actions/read-file@main
