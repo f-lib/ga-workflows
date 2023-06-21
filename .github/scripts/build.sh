@@ -34,6 +34,7 @@ do
   aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_URI
 
   docker buildx build \
+  --progress plain \
   -t $REMOTE_IMAGE \
   --platform=local \
   --provenance=false \
