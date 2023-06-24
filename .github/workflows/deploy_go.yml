@@ -19,7 +19,7 @@ on:
 
 jobs:
   deploy_go:
-    name: deploy-go
+    name: ">"
     uses: ./.github/workflows/deploy_go_single.yml
     needs: [get_params]
     with:
