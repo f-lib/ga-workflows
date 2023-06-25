@@ -41,8 +41,8 @@ do
   --build-arg TARGET_TYPE=$TARGET_TYPE \
   --build-arg TARGET_NAME=$TARGET_NAME \
   --target final \
-  --cache-from type=s3,region=us-east-2,bucket=$S3_CACHE_BUCKET,prefix=$S3_CACHE_PREFIX/ \
-  --cache-to type=s3,region=us-east-2,bucket=$S3_CACHE_BUCKET,prefix=$S3_CACHE_PREFIX/ \
+  --cache-from mode=max,type=s3,region=us-east-2,bucket=$S3_CACHE_BUCKET,prefix=$S3_CACHE_PREFIX/ \
+  --cache-to mode=max,type=s3,region=us-east-2,bucket=$S3_CACHE_BUCKET,prefix=$S3_CACHE_PREFIX/ \
   --push \
   ./go
 done
