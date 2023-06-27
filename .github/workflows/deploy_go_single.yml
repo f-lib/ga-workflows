@@ -34,7 +34,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, "${{ inputs.arch }}", "ap-south-2"]
+    runs-on: [self-hosted, "${{ inputs.arch }}"]
     name: "[${{ inputs.target_type }}][${{ inputs.target_name }}] build"
     steps:
       - uses: actions/checkout@v3
