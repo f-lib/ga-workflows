@@ -51,7 +51,7 @@ jobs:
           ${GITHUB_WORKSPACE}/cur_repo_root/.github/scripts/build.sh ${{ inputs.env }} ${{ inputs.target_type }} ${{ inputs.target_name }} '${{ inputs.regions }}' ${{ inputs.arch }} ${{ secrets.github_login }} ${{ inputs.aws_account_id }} ${{ inputs.dry_run }} ${{ github.event.repository.name }}
 
   wait:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: "[${{ inputs.target_type }}][${{ inputs.target_name }}] wait"
     needs: [build]
     strategy:
