@@ -34,7 +34,8 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, "${{ inputs.arch }}"]
+    # Currently not running x86 runners to save cost
+    runs-on: ${{ inputs.arch == 'x86' && 'ubuntu-latest' || inputs.arch }}
     name: "[${{ inputs.target_type }}][${{ inputs.target_name }}] build"
     steps:
       - uses: actions/checkout@v3
