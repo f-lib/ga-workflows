@@ -6,7 +6,7 @@ on:
       channel:
         required: true
         type: string
-      payload:
+      message:
         required: true
         type: string
 
@@ -19,7 +19,7 @@ jobs:
           channel-id: ${{ inputs.channel }}
           payload: |
             {
-              "text": "${{ inputs.payload }} ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+              "text": "${{ inputs.message }} ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
