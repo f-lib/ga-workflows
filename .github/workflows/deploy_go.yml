@@ -44,7 +44,7 @@ jobs:
     with:
       channel: github-workflow
       message: >-
-        :green_heart:
+        ${{ inputs.env == 'prd' && ':large_green_circle:' || ':green_heart:' }}
     secrets: inherit
 
   notify_failure:
@@ -54,7 +54,7 @@ jobs:
     with:
       channel: github-workflow
       message: >-
-        <!here>\n:broken_heart:
+        <!here>\n${{ inputs.env == 'prd' && ':red_circle:' || ':broken_heart:' }}
     secrets: inherit
 
   # notify_success:
