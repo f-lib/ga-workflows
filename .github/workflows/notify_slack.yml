@@ -1,0 +1,25 @@
+name: notify_slack
+
+on:
+  workflow_call:
+    inputs:
+      channel:
+        required: true
+        type: string
+      payload:
+        required: true
+        type: string
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: ${{ inputs.channel }}
+          payload: |
+            {
+              "text": "${{ inputs.payload }} ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}

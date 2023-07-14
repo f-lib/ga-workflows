@@ -31,21 +31,17 @@ jobs:
       regions: ${{ matrix.config.regions == 'all' && needs.get_params.outputs.target_regions || matrix.config.regions }}
       arch: ${{ matrix.config.arch }}
       dry_run: ${{ inputs.dry_run }}
-    secrets:
-      github_login: ${{ secrets.MY_GITHUB_LOGIN }}
     strategy:
       fail-fast: false
       matrix:
         config: ${{ fromJson(needs.get_params.outputs.config) }}
 
-  notify:
+  notify_success:
     runs-on: ubuntu-latest
     needs: [deploy_go]
-    if: ${{ success() || failure() }}
+    if: ${{ success() }}
     steps:
       - uses: slackapi/slack-github-action@v1.24.0
-        if: ${{ needs.deploy_go.result == 'success' }}
-        name: notify success
         with:
           channel-id: "github-workflow"
           payload: |
@@ -54,8 +50,13 @@ jobs:
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+
+  notify_failure:
+    runs-on: ubuntu-latest
+    needs: [deploy_go]
+    if: ${{ failure() }}
+    steps:
       - uses: slackapi/slack-github-action@v1.24.0
-        if: ${{ needs.deploy_go.result == 'failure' }}
         name: notify failure
         with:
           channel-id: "github-workflow"
