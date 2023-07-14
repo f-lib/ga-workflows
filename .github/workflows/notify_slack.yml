@@ -9,6 +9,9 @@ on:
       message:
         required: true
         type: string
+    # secrets:
+    #   SLACK_TOKEN:
+    #     required: true
 
 jobs:
   notify:
