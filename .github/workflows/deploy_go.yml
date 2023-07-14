@@ -38,13 +38,21 @@ jobs:
       matrix:
         config: ${{ fromJson(needs.get_params.outputs.config) }}
 
-  notify:
+  notify_success:
     needs: [deploy_go]
-    if: ${{ success() || failure() }}
+    if: ${{ success() }}
     uses: ./.github/workflows/notify_slack.yml
     with:
       channel: github-workflow
-      message: ${{ success() && ":green_heart:" || "<!here>\n:broken_heart:" }}
+      message: ${{ ":green_heart:" }}
+
+  notify_failure:
+    needs: [deploy_go]
+    if: ${{ failure() }}
+    uses: ./.github/workflows/notify_slack.yml
+    with:
+      channel: github-workflow
+      message: ${{ "<!here>\n:broken_heart:" }}
 
   # notify_success:
   #   runs-on: ubuntu-latest
