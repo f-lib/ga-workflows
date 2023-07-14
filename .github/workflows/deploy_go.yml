@@ -44,7 +44,7 @@ jobs:
     uses: ./.github/workflows/notify_slack.yml
     with:
       channel: github-workflow
-      message: ${{ ":green_heart:" }}
+      message: ":green_heart:"
 
   notify_failure:
     needs: [deploy_go]
@@ -52,7 +52,7 @@ jobs:
     uses: ./.github/workflows/notify_slack.yml
     with:
       channel: github-workflow
-      message: ${{ "<!here>\n:broken_heart:" }}
+      message: "<!here>\n:broken_heart:"
 
   # notify_success:
   #   runs-on: ubuntu-latest
