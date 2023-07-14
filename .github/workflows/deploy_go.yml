@@ -38,36 +38,44 @@ jobs:
       matrix:
         config: ${{ fromJson(needs.get_params.outputs.config) }}
 
-  notify_success:
-    runs-on: ubuntu-latest
+  notify:
     needs: [deploy_go]
-    if: ${{ success() }}
-    steps:
-      - uses: slackapi/slack-github-action@v1.24.0
-        with:
-          channel-id: "github-workflow"
-          payload: |
-            {
-              "text": ":green_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+    if: ${{ success() || failure() }}
+    uses: ./.github/workflows/notify_slack.yml
+    with:
+      channel: github-workflow
+      message: ${{ success() && ":green_heart:" || "<!here>\n:broken_heart:" }}
 
-  notify_failure:
-    runs-on: ubuntu-latest
-    needs: [deploy_go]
-    if: ${{ failure() }}
-    steps:
-      - uses: slackapi/slack-github-action@v1.24.0
-        name: notify failure
-        with:
-          channel-id: "github-workflow"
-          payload: |
-            {
-              "text": "<!here>\n:broken_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+  # notify_success:
+  #   runs-on: ubuntu-latest
+  #   needs: [deploy_go]
+  #   if: ${{ success() }}
+  #   steps:
+  #     - uses: slackapi/slack-github-action@v1.24.0
+  #       with:
+  #         channel-id: "github-workflow"
+  #         payload: |
+  #           {
+  #             "text": ":green_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+  #           }
+  #       env:
+  #         SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+
+  # notify_failure:
+  #   runs-on: ubuntu-latest
+  #   needs: [deploy_go]
+  #   if: ${{ failure() }}
+  #   steps:
+  #     - uses: slackapi/slack-github-action@v1.24.0
+  #       name: notify failure
+  #       with:
+  #         channel-id: "github-workflow"
+  #         payload: |
+  #           {
+  #             "text": "<!here>\n:broken_heart: ${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+  #           }
+  #       env:
+  #         SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
 
   get_params:
     runs-on: ubuntu-latest
