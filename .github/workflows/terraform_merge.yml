@@ -16,7 +16,7 @@ jobs:
           aws-region: us-east-1
       - uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: projects/479653503618/locations/global/workloadIdentityPools/ga-3-flicspy-${{ github.event.repository.name }}/providers/provider
+          workload_identity_provider: projects/479653503618/locations/global/workloadIdentityPools/ga-3-flicspy-${{ github.event.repository.name }}-tf/providers/provider
           service_account: github-actions-terraform@flicspy-prd.iam.gserviceaccount.com
       - uses: actions/setup-node@v3
         with:
