@@ -1,0 +1,180 @@
+name: terraform_pr
+
+on:
+  workflow_call:
+    # inputs:
+    # stg_ga_role:
+    #   required: true
+    #   type: string
+    # stg_ga_wip:
+    #   required: true
+    #   type: string
+    # stg_ga_gsa:
+    #   required: true
+    #   type: string
+    # stg_backend_bucket:
+    #   required: true
+    #   type: string
+    # stg_backend_ddb_table:
+    #   required: true
+    #   type: string
+    # stg_terraform_role:
+    #   required: true
+    #   type: string
+    # stg_terraform_gsa:
+    #   required: true
+    #   type: string
+    # prd_ga_role:
+    #   required: true
+    #   type: string
+    # stg_ga_wip:
+    #   required: true
+    #   type: string
+    # stg_ga_gsa:
+    #   required: true
+    #   type: string
+    # stg_backend_bucket:
+    #   required: true
+    #   type: string
+    # stg_backend_ddb_table:
+    #   required: true
+    #   type: string
+    # stg_terraform_role:
+    #   required: true
+    #   type: string
+    # stg_terraform_gsa:
+    #   required: true
+    #   type: string
+
+jobs:
+  get_env:
+    runs-on: ubuntu-latest
+    name: get env from label
+    steps:
+      - uses: actions/github-script@v6
+        id: get_env
+        with:
+          # Returns "stg-x"
+          result-encoding: string
+          script: |
+            const labels_names = context.payload.pull_request.labels.map(x => x.name)
+            console.log('labels', context.payload.pull_request.labels)
+            const env_labels = labels_names.filter(x => x.startsWith("env: ")).map(x => x.substring(5))
+            console.log('env_labels', env_labels.join())
+            if (env_labels.length == 0) {
+              return ""
+            }
+            return env_labels[0]
+    outputs:
+      env: ${{ steps.get_env.outputs.result}}
+
+  stg-plan:
+    runs-on: ubuntu-latest
+    name: "[stg] plan"
+    needs: [get_env]
+    if: >
+      needs.get_env.outputs.env != '' && !contains(github.event.pull_request.labels.*.name, 'terraform: apply')
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::721756646069:role/flicspy-${{ github.event.repository.name }}-github-actions-terraform
+          aws-region: us-east-1
+      - run: "aws sts get-caller-identity"
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/287979390947/locations/global/workloadIdentityPools/ga-3-flicspy-${{ github.event.repository.name }}-tf/providers/provider
+          service_account: github-actions-terraform@f-development.iam.gserviceaccount.com
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.16.0"
+      - uses: hashicorp/setup-terraform@v2.0.3
+      - run: "terraform version"
+      - run: >
+          terraform init
+          -backend-config=bucket=flicspy-${{ needs.get_env.outputs.env }}-${{ github.event.repository.name }}-state
+          -backend-config=dynamodb_table=flicspy-${{ needs.get_env.outputs.env }}-${{ github.event.repository.name }}-state-lock
+      - run: >
+          terraform plan -lock-timeout=1h
+          -var=env=${{ needs.get_env.outputs.env }}
+          -var=role_arn=arn:aws:iam::721756646069:role/f-admin-terraform
+          -var=impersonate_sa=terraform@f-development.iam.gserviceaccount.com
+
+  stg-apply:
+    runs-on: ubuntu-latest
+    name: "[stg] apply"
+    needs: [get_env]
+    if: >
+      needs.get_env.outputs.env != '' && contains(github.event.pull_request.labels.*.name, 'terraform: apply')
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::721756646069:role/flicspy-${{ github.event.repository.name }}-github-actions-terraform
+          aws-region: us-east-1
+      - run: "aws sts get-caller-identity"
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/287979390947/locations/global/workloadIdentityPools/ga-3-flicspy-${{ github.event.repository.name }}-tf/providers/provider
+          service_account: github-actions-terraform@f-development.iam.gserviceaccount.com
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.16.0"
+      - uses: hashicorp/setup-terraform@v2.0.3
+      - run: "terraform version"
+      - run: >
+          terraform init
+          -backend-config=bucket=flicspy-${{ needs.get_env.outputs.env }}-${{ github.event.repository.name }}-state
+          -backend-config=dynamodb_table=flicspy-${{ needs.get_env.outputs.env }}-${{ github.event.repository.name }}-state-lock
+      - run: >
+          terraform apply -auto-approve -lock-timeout=1h
+          -var=env=${{ needs.get_env.outputs.env }}
+          -var=role_arn=arn:aws:iam::721756646069:role/f-admin-terraform
+          -var=impersonate_sa=terraform@f-development.iam.gserviceaccount.com
+
+  prd-plan:
+    runs-on: ubuntu-latest
+    name: "[prd] plan"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::758533789927:role/flicspy-${{ github.event.repository.name }}-github-actions-terraform-read
+          aws-region: us-east-1
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/479653503618/locations/global/workloadIdentityPools/ga-3-flicspy-${{ github.event.repository.name }}-tf-r/providers/provider
+          service_account: github-actions-terraform-read@flicspy-prd.iam.gserviceaccount.com
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.16.0"
+      - uses: hashicorp/setup-terraform@v2.0.3
+      - run: >
+          terraform init
+          -backend-config=bucket=flicspy-prd-${{ github.event.repository.name }}-state
+          -backend-config=dynamodb_table=flicspy-prd-${{ github.event.repository.name }}-state-lock
+      - run: >
+          terraform plan -lock-timeout=1h
+          -var=env=prd
+          -var=role_arn=arn:aws:iam::758533789927:role/f-admin-terraform-read
+          -var=impersonate_sa=terraform-read@flicspy-prd.iam.gserviceaccount.com
+
+  notify-success:
+    needs: [stg-plan, stg-apply, prd-plan]
+    if: ${{ !failure() }}
+    uses: ./.github/workflows/notify_slack.yml
+    with:
+      channel: github-workflow
+      message: >-
+        :green_heart:
+    secrets: inherit
+
+  notify-failure:
+    needs: [stg-plan, stg-apply, prd-plan]
+    if: ${{ failure() }}
+    uses: ./.github/workflows/notify_slack.yml
+    with:
+      channel: github-workflow
+      message: >-
+        <!here>\n:broken_heart:
+    secrets: inherit

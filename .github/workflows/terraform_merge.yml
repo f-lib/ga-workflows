@@ -1,0 +1,54 @@
+name: terraform_merge
+
+on:
+  workflow_call:
+
+
+jobs:
+  prd-apply:
+    runs-on: ubuntu-latest
+    name: "[prd] apply"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::758533789927:role/flicspy-${{ github.event.repository.name }}-github-actions-terraform
+          aws-region: us-east-1
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/479653503618/locations/global/workloadIdentityPools/ga-3-flicspy-${{ github.event.repository.name }}/providers/provider
+          service_account: github-actions-terraform@flicspy-prd.iam.gserviceaccount.com
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.16.0'
+      - uses: hashicorp/setup-terraform@v2.0.3
+      - run: >
+          terraform init
+          -backend-config=bucket=flicspy-prd-${{ github.event.repository.name }}-state
+          -backend-config=dynamodb_table=flicspy-prd-${{ github.event.repository.name }}-state-lock
+      - run: >
+          terraform apply -auto-approve -lock-timeout=1h
+          -var=env=prd
+          -var=role_arn=arn:aws:iam::758533789927:role/f-admin-terraform
+          -var=impersonate_sa=terraform@flicspy-prd.iam.gserviceaccount.com
+
+
+  notify-success:
+    needs: [prd-apply]
+    if: ${{ success() }}
+    uses: ./.github/workflows/notify_slack.yml
+    with:
+      channel: github-workflow
+      message: >-
+        :large_green_circle:
+    secrets: inherit
+
+  notify-failure:
+    needs: [prd-apply]
+    if: ${{ !success() }}
+    uses: ./.github/workflows/notify_slack.yml
+    with:
+      channel: github-workflow
+      message: >-
+        <!here>\n:red_circle:
+    secrets: inherit
