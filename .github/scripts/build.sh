@@ -24,7 +24,8 @@ S3_CACHE_PREFIX=$TARGET_TYPE-$TARGET_NAME-$ARCH
 
 docker login -u flicspy -p dckr_pat_a1SHm6jM-Ei5NEHDuPvu8nZdMP8
 
-for REGION in $(echo $REGIONS | jq -r '.[]')
+# Always push to all regions
+for REGION in "us-east-2" "ap-northeast-2"
 do
   ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
   REMOTE_IMAGE=$ECR_URI/$IMAGE
