@@ -2,49 +2,6 @@ name: terraform_pr
 
 on:
   workflow_call:
-    # inputs:
-    # stg_ga_role:
-    #   required: true
-    #   type: string
-    # stg_ga_wip:
-    #   required: true
-    #   type: string
-    # stg_ga_gsa:
-    #   required: true
-    #   type: string
-    # stg_backend_bucket:
-    #   required: true
-    #   type: string
-    # stg_backend_ddb_table:
-    #   required: true
-    #   type: string
-    # stg_terraform_role:
-    #   required: true
-    #   type: string
-    # stg_terraform_gsa:
-    #   required: true
-    #   type: string
-    # prd_ga_role:
-    #   required: true
-    #   type: string
-    # stg_ga_wip:
-    #   required: true
-    #   type: string
-    # stg_ga_gsa:
-    #   required: true
-    #   type: string
-    # stg_backend_bucket:
-    #   required: true
-    #   type: string
-    # stg_backend_ddb_table:
-    #   required: true
-    #   type: string
-    # stg_terraform_role:
-    #   required: true
-    #   type: string
-    # stg_terraform_gsa:
-    #   required: true
-    #   type: string
 
 jobs:
   get_env:
