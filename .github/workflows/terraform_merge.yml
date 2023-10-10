@@ -27,7 +27,7 @@ jobs:
           -backend-config=bucket=flicspy-prd-${{ github.event.repository.name }}-state
           -backend-config=dynamodb_table=flicspy-prd-${{ github.event.repository.name }}-state-lock
       - run: >
-          terraform apply -auto-approve -lock-timeout=1h
+          terraform apply -input=false -auto-approve -lock-timeout=1h
           -var=env=prd
           -var=role_arn=arn:aws:iam::758533789927:role/f-admin-terraform
           -var=impersonate_sa=terraform@flicspy-prd.iam.gserviceaccount.com
