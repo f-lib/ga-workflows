@@ -118,7 +118,7 @@ jobs:
 
   notify-success:
     needs: [stg-plan, stg-apply, prd-plan]
-    if: ${{ !failure() }}
+    if: ${{ success() }}
     uses: ./.github/workflows/notify_slack.yml
     with:
       channel: github-workflow
@@ -128,7 +128,7 @@ jobs:
 
   notify-failure:
     needs: [stg-plan, stg-apply, prd-plan]
-    if: ${{ failure() }}
+    if: ${{ !success() }}
     uses: ./.github/workflows/notify_slack.yml
     with:
       channel: github-workflow
