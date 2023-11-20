@@ -34,7 +34,7 @@ do
   docker buildx build \
   --progress plain \
   -t $REMOTE_IMAGE \
-  --platform=local \
+  --platform=linux/amd64,linux/arm64 \
   --provenance=false \
   -f ./go/cmd/$TARGET_TYPE/$TARGET_NAME/Dockerfile \
   --build-arg MY_GITHUB_LOGIN=${MY_GITHUB_LOGIN} \
