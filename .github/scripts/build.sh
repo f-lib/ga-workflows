@@ -10,6 +10,7 @@ MY_GITHUB_LOGIN=$6
 AWS_ACCOUNT_ID=$7
 DRY_RUN=$8
 REPO_NAME=$9
+ALL_REGIONS=$10
 
 if [[ $DRY_RUN == "true" ]]; then
   exit 0
@@ -22,9 +23,8 @@ IMAGE=flicspy-$ENV-$REPO_NAME-$TARGET_TYPE-$TARGET_NAME:linux-$ARCH
 S3_CACHE_BUCKET=flicspy-$ENV-$REPO_NAME-docker-cache
 S3_CACHE_PREFIX=$TARGET_TYPE-$TARGET_NAME-$ARCH
 
-docker login -u flicspy -p dckr_pat_a1SHm6jM-Ei5NEHDuPvu8nZdMP8
-
-for REGION in $(echo $REGIONS | jq -r '.[]')
+# Push to all regions, including black.
+for REGION in $(echo $ALL_REGIONS | jq -r '.[]')
 do
   ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
   REMOTE_IMAGE=$ECR_URI/$IMAGE
@@ -47,6 +47,7 @@ do
   ./go
 done
 
+# Deploy to blue and green regions
 for REGION in $(echo $REGIONS | jq -r '.[]')
 do
   ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com

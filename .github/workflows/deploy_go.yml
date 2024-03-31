@@ -29,6 +29,7 @@ jobs:
       target_type: ${{ matrix.config.type }}
       target_name: ${{ matrix.config.name }}
       regions: ${{ matrix.config.regions == 'all' && needs.get_params.outputs.target_regions || matrix.config.regions }}
+      all_regions: ${{ needs.get_params.outputs.all_regions }}
       arch: ${{ matrix.config.arch }}
       dry_run: ${{ inputs.dry_run }}
     secrets: inherit
@@ -75,6 +76,12 @@ jobs:
         with:
           ssm_param_name: flicspy-${{ inputs.env }}-${{ github.event.repository.name }}-blue-green-regions
           ssm_param_region: us-east-2
+      - id: get_all_regions
+        uses: f-lib/github-actions/get-target-regions@main
+        with:
+          ssm_param_name: flicspy-${{ inputs.env }}-${{ github.event.repository.name }}-all-regions
+          ssm_param_region: us-east-2
     outputs:
       target_regions: ${{ steps.get_target_regions.outputs.target_regions }}
+      all_regions: ${{ steps.get_all_regions.outputs.target_regions }}
       config: ${{ steps.load_json.outputs.text }}
