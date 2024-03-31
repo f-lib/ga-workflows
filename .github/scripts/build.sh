@@ -10,7 +10,7 @@ MY_GITHUB_LOGIN=$6
 AWS_ACCOUNT_ID=$7
 DRY_RUN=$8
 REPO_NAME=$9
-ALL_REGIONS=$10
+ALL_REGIONS=${10}
 
 if [[ $DRY_RUN == "true" ]]; then
   exit 0
