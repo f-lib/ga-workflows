@@ -127,7 +127,7 @@ jobs:
     if: ${{ !failure() }}
     uses: ./.github/workflows/notify_slack.yml
     with:
-      channel: ${{ var.SLACK_NOTIFY_CHANNEL }}
+      channel: ${{ vars.SLACK_NOTIFY_CHANNEL }}
       message: >-
         :green_heart:
     secrets: inherit
@@ -137,7 +137,7 @@ jobs:
     if: ${{ failure() }}
     uses: ./.github/workflows/notify_slack.yml
     with:
-      channel: ${{ var.SLACK_NOTIFY_CHANNEL }}
+      channel: ${{ vars.SLACK_NOTIFY_CHANNEL }}
       message: >-
         <!here>\n:broken_heart:
     secrets: inherit

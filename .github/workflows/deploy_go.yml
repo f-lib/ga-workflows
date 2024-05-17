@@ -43,7 +43,7 @@ jobs:
     if: ${{ success() }}
     uses: ./.github/workflows/notify_slack.yml
     with:
-      channel: ${{ var.SLACK_NOTIFY_CHANNEL }}
+      channel: ${{ vars.SLACK_NOTIFY_CHANNEL }}
       message: >-
         ${{ inputs.env == 'prd' && ':large_green_circle:' || ':green_heart:' }}
     secrets: inherit
@@ -53,7 +53,7 @@ jobs:
     if: ${{ !success() }}
     uses: ./.github/workflows/notify_slack.yml
     with:
-      channel: ${{ var.SLACK_NOTIFY_CHANNEL }}
+      channel: ${{ vars.SLACK_NOTIFY_CHANNEL }}
       message: >-
         <!here>\n${{ inputs.env == 'prd' && ':red_circle:' || ':broken_heart:' }}
     secrets: inherit
