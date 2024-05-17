@@ -40,7 +40,7 @@ jobs:
     if: ${{ success() }}
     uses: ./.github/workflows/notify_slack.yml
     with:
-      channel: github-workflow
+      channel: ${{ var.SLACK_NOTIFY_CHANNEL }}
       message: >-
         :large_green_circle:
     secrets: inherit
@@ -50,7 +50,7 @@ jobs:
     if: ${{ !success() }}
     uses: ./.github/workflows/notify_slack.yml
     with:
-      channel: github-workflow
+      channel: ${{ var.SLACK_NOTIFY_CHANNEL }}
       message: >-
         <!here>\n:red_circle:
     secrets: inherit
