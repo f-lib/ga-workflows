@@ -24,7 +24,7 @@ S3_CACHE_BUCKET=flicspy-$ENV-$REPO_NAME-docker-cache
 S3_CACHE_PREFIX=$TARGET_TYPE-$TARGET_NAME-$ARCH
 
 # Push to all regions, including black.
-for REGION in $(echo $ALL_REGIONS | jq -r '.[]')
+for REGION in $(set -e; echo $ALL_REGIONS | jq -r '.[]')
 do
   ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
   REMOTE_IMAGE=$ECR_URI/$IMAGE
@@ -48,7 +48,7 @@ do
 done
 
 # Deploy to blue and green regions
-for REGION in $(echo $REGIONS | jq -r '.[]')
+for REGION in $(set -e; echo $REGIONS | jq -r '.[]')
 do
   ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
   REMOTE_IMAGE=$ECR_URI/$IMAGE
