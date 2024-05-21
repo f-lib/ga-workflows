@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     name: get env from label
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         id: get_env
         with:
           # Returns "stg-x"
