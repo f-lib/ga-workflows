@@ -17,7 +17,7 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - uses: slackapi/slack-github-action@v1.24.0
+      - uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ inputs.channel }}
           payload: |
