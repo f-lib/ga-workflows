@@ -62,12 +62,12 @@ jobs:
     runs-on: ubuntu-latest
     name: get_params
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: load_json
         uses: f-lib/github-actions/read-file@main
         with:
           path: ${{ inputs.path }}
-      - uses: aws-actions/configure-aws-credentials@v1-node16
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/flicspy-${{ github.event.repository.name }}-github-actions-deploy
           aws-region: us-east-1

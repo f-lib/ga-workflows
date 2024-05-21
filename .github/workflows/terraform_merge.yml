@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     name: "[prd] apply"
     steps:
-      - uses: actions/checkout@v3
-      - uses: aws-actions/configure-aws-credentials@v1-node16
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::758533789927:role/flicspy-${{ github.event.repository.name }}-github-actions-terraform
           aws-region: us-east-1
@@ -18,7 +18,7 @@ jobs:
         with:
           workload_identity_provider: projects/479653503618/locations/global/workloadIdentityPools/ga-3-flicspy-${{ github.event.repository.name }}-tf/providers/provider
           service_account: github-actions-terraform@flicspy-prd.iam.gserviceaccount.com
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: '18.16.0'
       - uses: hashicorp/setup-terraform@v3
