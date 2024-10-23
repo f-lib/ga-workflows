@@ -27,6 +27,10 @@ on:
       arch:
         required: true
         type: string
+      runs_on:
+        required: false
+        type: string
+        default: ubuntu-latest
       dry_run:
         required: false
         default: false
@@ -38,7 +42,7 @@ on:
 jobs:
   build:
     # Currently not running x86 runners to save cost
-    runs-on: ${{ inputs.arch == 'x86' && 'ubuntu-latest' || inputs.arch }}
+    runs-on: ${{ inputs.runs_on }}
     name: "[${{ inputs.target_type }}][${{ inputs.target_name }}] build"
     steps:
       - uses: actions/checkout@v4
