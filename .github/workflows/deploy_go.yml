@@ -30,6 +30,7 @@ jobs:
       target_name: ${{ matrix.config.name }}
       regions: ${{ matrix.config.regions == 'all' && needs.get_params.outputs.target_regions || matrix.config.regions }}
       all_regions: ${{ matrix.config.regions == 'all' && needs.get_params.outputs.all_regions || matrix.config.regions }}
+      os: ${{ matrix.config.os }}
       arch: ${{ matrix.config.arch }}
       dry_run: ${{ inputs.dry_run }}
     secrets: inherit
