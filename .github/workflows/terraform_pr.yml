@@ -49,11 +49,11 @@ jobs:
         with:
           terraform_version: "1.8.3"
       - run: "terraform version"
-      - run: "terraform state list"
       - run: >
           terraform init
           -backend-config=bucket=flicspy-${{ needs.get_env.outputs.env }}-${{ github.event.repository.name }}-state
           -backend-config=dynamodb_table=flicspy-${{ needs.get_env.outputs.env }}-${{ github.event.repository.name }}-state-lock
+      - run: "terraform state list"
       - run: >
           terraform plan -input=false -lock-timeout=1h
           -var=env=${{ needs.get_env.outputs.env }}
