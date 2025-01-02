@@ -34,7 +34,7 @@ jobs:
           -var=env=prd
           -var=role_arn=arn:aws:iam::758533789927:role/f-admin-terraform
           -var=impersonate_sa=terraform@flicspy-prd.iam.gserviceaccount.com
-
+          -var-file="tfvars/prd.tfvars.json"
 
   notify-success:
     needs: [prd-apply]

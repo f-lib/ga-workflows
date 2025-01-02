@@ -59,6 +59,7 @@ jobs:
           -var=env=${{ needs.get_env.outputs.env }}
           -var=role_arn=arn:aws:iam::721756646069:role/f-admin-terraform
           -var=impersonate_sa=terraform@f-development.iam.gserviceaccount.com
+          -var-file="tfvars/${{ needs.get_env.outputs.env }}.tfvars.json"
 
   stg-apply:
     runs-on: ubuntu-latest
@@ -93,6 +94,7 @@ jobs:
           -var=env=${{ needs.get_env.outputs.env }}
           -var=role_arn=arn:aws:iam::721756646069:role/f-admin-terraform
           -var=impersonate_sa=terraform@f-development.iam.gserviceaccount.com
+          -var-file="tfvars/${{ needs.get_env.outputs.env }}.tfvars.json"
 
   prd-plan:
     runs-on: ubuntu-latest
@@ -122,6 +124,7 @@ jobs:
           -var=env=prd
           -var=role_arn=arn:aws:iam::758533789927:role/f-admin-terraform-read
           -var=impersonate_sa=terraform-read@flicspy-prd.iam.gserviceaccount.com
+          -var-file="tfvars/prd.tfvars.json"
 
   notify-success:
     needs: [stg-plan, stg-apply, prd-plan]
