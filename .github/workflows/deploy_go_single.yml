@@ -52,6 +52,8 @@ jobs:
           repository: f-lib/ga-workflows
           path: cur_repo_root
       - run: >
+          git config --global url."https://${{ secrets.MY_GITHUB_LOGIN }}@github.com".insteadOf "https://github.com"
+      - run: >
           cd go && go test ./...
 
   build:
