@@ -24,17 +24,9 @@ IMAGE=flicspy-$ENV-$REPO_NAME-$TARGET_TYPE-$TARGET_NAME:$OS-$ARCH
 S3_CACHE_BUCKET=flicspy-$ENV-$REPO_NAME-docker-cache
 S3_CACHE_PREFIX=$TARGET_TYPE-$TARGET_NAME-$OS-$ARCH
 
-# Push to all regions, including black.
-for REGION in $(set -e; echo $ALL_REGIONS | jq -r '.[]')
-do
-  ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
-  REMOTE_IMAGE=$ECR_URI/$IMAGE
-
-  aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_URI
-
   docker buildx build \
   --progress plain \
-  -t $REMOTE_IMAGE \
+  -t $IMAGE \
   --platform=local \
   --provenance=false \
   -f ./go/cmd/$TARGET_TYPE/$TARGET_NAME/Dockerfile \
@@ -44,8 +36,19 @@ do
   --target final \
   --cache-from type=s3,region=us-east-2,bucket=$S3_CACHE_BUCKET,prefix=$S3_CACHE_PREFIX/ \
   --cache-to type=s3,region=us-east-2,bucket=$S3_CACHE_BUCKET,prefix=$S3_CACHE_PREFIX/ \
-  --push \
+  --load \
   ./go
+
+docker run $IMAGE go test ./...
+
+# Push to all regions, including black.
+for REGION in $(set -e; echo $ALL_REGIONS | jq -r '.[]')
+do
+  ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+  REMOTE_IMAGE=$ECR_URI/$IMAGE
+  docker image tag $IMAGE $REMOTE_IMAGE
+  aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_URI
+  docker image push $REMOTE_IMAGE
 done
 
 # Deploy to blue and green regions

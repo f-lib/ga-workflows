@@ -58,8 +58,8 @@ jobs:
       - uses: docker/setup-buildx-action@v3
       - run: >
           ${GITHUB_WORKSPACE}/cur_repo_root/.github/scripts/build.sh ${{ inputs.env }} ${{ inputs.target_type }} ${{ inputs.target_name }} '${{ inputs.regions }}' ${{ inputs.os }} ${{ inputs.arch }} ${{ secrets.MY_GITHUB_LOGIN }} ${{ inputs.aws_account_id }} ${{ inputs.dry_run }} ${{ github.event.repository.name }} '${{ inputs.all_regions }}'
-      - run: >
-          ${GITHUB_WORKSPACE}/cur_repo_root/.github/scripts/test.sh ${{ inputs.env }} ${{ inputs.target_type }} ${{ inputs.target_name }} '${{ inputs.regions }}' ${{ inputs.os }} ${{ inputs.arch }} ${{ secrets.MY_GITHUB_LOGIN }} ${{ inputs.aws_account_id }} ${{ inputs.dry_run }} ${{ github.event.repository.name }} '${{ inputs.all_regions }}'
+      # - run: >
+      #     ${GITHUB_WORKSPACE}/cur_repo_root/.github/scripts/test.sh ${{ inputs.env }} ${{ inputs.target_type }} ${{ inputs.target_name }} '${{ inputs.regions }}' ${{ inputs.os }} ${{ inputs.arch }} ${{ secrets.MY_GITHUB_LOGIN }} ${{ inputs.aws_account_id }} ${{ inputs.dry_run }} ${{ github.event.repository.name }} '${{ inputs.all_regions }}'
 
   wait:
     runs-on: ubuntu-latest
